@@ -1,0 +1,63 @@
+<?php
+  require_once('connectvars.php');
+
+  // Connect to the database
+  $dbc = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {            // Grab the profile data from the POST
+    $username = $_POST['username'];
+    $password1 = $_POST['password1'];
+    $password2 = $_POST['password2'];
+	$company = $_POST['company'];
+	$Email1 = $_POST['email1'];
+	$Email2 = $_POST['email2'];
+
+
+
+    if (!empty($username) && !empty($password1) && !empty($password2) && !empty($Email1) && !empty($Email2) && ( $password1 == $password2 ) && ( $Email1 == $Email2 )) {
+      // Make sure someone isn't already registered using this username
+      $query = "SELECT * FROM Users WHERE Username ='$username'";
+      $data = mysqli_query($dbc, $query);
+      if ( mysqli_num_rows($data) ==  0)  {
+        // The username is unique, so insert the data into the database
+        $query = "INSERT INTO Users (Username, Password, Company, Email) 
+                VALUES ('$username', SHA('$password1'), '$company' , '$Email1')";
+        mysqli_query($dbc, $query);
+		
+
+        // Confirm success with the user
+        $msg = '<p class="success">You have successfully signed up for WindsorSalons.com! You can now log in.</p>';
+
+        mysqli_close($dbc);
+      }
+      else {
+        // An account already exists for this username, so display an error message
+        $msg = '<p class="error">An account already exists for this username. Please use a different address.</p>';
+        $username = "";
+      }
+    }
+    else {
+      $msg = '<p class="error">You must enter all of the information, including your password and e-mail address twice.</p>';
+    }
+  }
+?>
+<!DOCTYPE HTML>
+<html>
+<head>
+	<META CHARSET="UTF-8">
+	<title>Windsor Salon Search Engine Reviews Find Coupons Deals </title>
+	<link rel="stylesheet" type="text/css" href="windsorSalons_old.css" />
+</head> 
+<body>
+	<?php
+	echo $msg;
+	$go = 'index.php?u=login';
+	?>
+	<div id="form">
+	<script type="text/javascript">
+		var delay = 3000; 
+		setTimeout(function(){ window.location = '<?php echo $go; ?>'; }, delay);
+	</script>
+	</div>
+</body>
+</html>
