@@ -1,4 +1,3 @@
 Windsor-Salons
 ==============
-
-A PHP and MySQL search function
+A Yelp! clone created using PHP and Mysql
